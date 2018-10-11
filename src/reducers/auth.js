@@ -42,7 +42,6 @@ export default function reducer(state = initialState, action) {
             error: action.error
         });
     } else if (action.type === SHOW_BUTTON) {
-        console.log('running')
         return Object.assign({}, state, {
             button: true
         })

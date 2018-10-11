@@ -11,15 +11,13 @@ import {refreshAuthToken, clearAuth, showButton} from '../actions/auth';
 export class App extends React.Component {
     componentDidUpdate(prevProps) {
         if (this.props.loggedIn) {
-            console.log('ran')
             clearTimeout(this.showRefreshButton)
-            clearTimeout(this.logOutTime)
             this.askForRefresh();
-            this.logOutAfterInactivity();
         }
         if (!prevProps.loggedIn && this.props.loggedIn) {
             // When we are logged in, refresh the auth token periodically
             this.startPeriodicRefresh();
+            this.logOutAfterInactivity();
         } else if (prevProps.loggedIn && !this.props.loggedIn) {
             // Stop refreshing when we log out
             this.stopPeriodicRefresh();
@@ -61,12 +59,21 @@ export class App extends React.Component {
     }
 
     render() {
+        let button
+        if (this.props.button) {
+          button = (<button onClick={e => {
+            this.props.dispatch(refreshAuthToken());
+            clearTimeout(this.logOutTime)
+            this.logOutAfterInactivity();
+          }}>Refresh</button>)
+        }
         return (
             <div className="app">
                 <HeaderBar />
                 <Route exact path="/" component={LandingPage} />
                 <Route exact path="/dashboard" component={Dashboard} />
                 <Route exact path="/register" component={RegistrationPage} />
+                {button}
             </div>
         );
     }
@@ -74,7 +81,8 @@ export class App extends React.Component {
 
 const mapStateToProps = state => ({
     hasAuthToken: state.auth.authToken !== null,
-    loggedIn: state.auth.currentUser !== null
+    loggedIn: state.auth.currentUser !== null,
+    button: state.auth.button
 });
 
 // Deal with update blocking - https://reacttraining.com/react-router/web/guides/dealing-with-update-blocking
