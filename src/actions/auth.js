@@ -33,13 +33,18 @@ export const authError = error => ({
     error
 });
 
+export const SHOW_BUTTON = 'SHOW_BUTTON';
+export const showButton = () => ({
+    type: SHOW_BUTTON
+});
+
 // Stores the auth token in state and localStorage, and decodes and stores
 // the user data stored in the token
 const storeAuthInfo = (authToken, dispatch) => {
     const decodedToken = jwtDecode(authToken);
     dispatch(setAuthToken(authToken));
     dispatch(authSuccess(decodedToken.user));
-    saveAuthToken(authToken);
+    // saveAuthToken(authToken);
 };
 
 export const login = (username, password) => dispatch => {

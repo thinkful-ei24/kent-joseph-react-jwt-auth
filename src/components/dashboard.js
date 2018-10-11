@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import requiresLogin from './requires-login';
 import {fetchProtectedData} from '../actions/protected-data';
+import {refreshAuthToken} from '../actions/auth'
 
 export class Dashboard extends React.Component {
     componentDidMount() {
@@ -9,6 +10,11 @@ export class Dashboard extends React.Component {
     }
 
     render() {
+        let button
+        if (this.props.button) {
+          button = (<button onClick={e => this.props.dispatch(refreshAuthToken())}>Refresh</button>)
+        }
+
         return (
             <div className="dashboard">
                 <div className="dashboard-username">
@@ -18,6 +24,7 @@ export class Dashboard extends React.Component {
                 <div className="dashboard-protected-data">
                     Protected data: {this.props.protectedData}
                 </div>
+                {button}
             </div>
         );
     }
@@ -28,7 +35,8 @@ const mapStateToProps = state => {
     return {
         username: state.auth.currentUser.username,
         name: `${currentUser.firstName} ${currentUser.lastName}`,
-        protectedData: state.protectedData.data
+        protectedData: state.protectedData.data,
+        button: state.auth.button
     };
 };
 
